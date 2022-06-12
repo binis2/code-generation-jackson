@@ -55,7 +55,7 @@ upon calling our web method all of the fields validations and sanitizations will
 Inside the exception class you will find list of all the fields which validations failed along with list of all validations that were not satisfied for each field. Here is how the exception looks like
 in the evaluator
 
-![evaluator](https://github.com/binis2/code-generation-spring-configuration/images/evaluator.png "IntelliJ Evaluator")
+![evaluator](https://github.com/binis2/code-generation-spring-configuration/raw/master/images/evaluator.png "IntelliJ Evaluator")
 
 For usage examples please see [https://github.com/binis2/code-generation]    
 For full project examples please see [https://github.com/binis2/code-generation-examples] 
