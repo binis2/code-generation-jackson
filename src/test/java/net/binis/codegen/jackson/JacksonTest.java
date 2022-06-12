@@ -20,34 +20,25 @@ package net.binis.codegen.jackson;
  * #L%
  */
 
-import com.fasterxml.jackson.databind.BeanDescription;
-import com.fasterxml.jackson.databind.DeserializationConfig;
-import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.deser.BeanDeserializer;
-import com.fasterxml.jackson.databind.deser.BeanDeserializerModifier;
-import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import lombok.SneakyThrows;
 import net.binis.codegen.annotation.builder.CodeRequest;
 import net.binis.codegen.exception.ValidationFormException;
-import net.binis.codegen.validation.Validatable;
 import net.binis.codegen.validation.annotation.SanitizeLowerCase;
 import net.binis.codegen.validation.annotation.SanitizeTrim;
 import net.binis.codegen.validation.annotation.ValidateLength;
 import net.binis.codegen.validation.annotation.ValidateNull;
-import org.junit.jupiter.api.Test;
-
-import java.util.List;
+import org.junit.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class JacksonTest {
+public class JacksonTest {
 
     @SneakyThrows
     @Test
-    void test() {
+    public void test() {
         var mapper = new ObjectMapper();
         mapper.setTypeFactory(new CodeProxyTypeFactory(mapper.getTypeFactory()));
         SimpleModule module = new SimpleModule();
