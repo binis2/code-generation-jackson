@@ -24,11 +24,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import lombok.SneakyThrows;
 import net.binis.codegen.annotation.builder.CodeRequest;
+import net.binis.codegen.enrich.CreatorModifierEnricher;
+import net.binis.codegen.enrich.ModifierEnricher;
 import net.binis.codegen.exception.ValidationFormException;
-import net.binis.codegen.validation.annotation.SanitizeLowerCase;
-import net.binis.codegen.validation.annotation.SanitizeTrim;
-import net.binis.codegen.validation.annotation.ValidateLength;
-import net.binis.codegen.validation.annotation.ValidateNull;
+import net.binis.codegen.jackson.objects.TestRequest;
+import net.binis.codegen.validation.annotation.*;
 import org.junit.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -56,6 +56,19 @@ public class JacksonTest {
         assertEquals("Belev", obj2.getValue());
 
         assertThrows(ValidationFormException.class, () -> mapper.readValue("{\"name\": \"Binis\", \"value\": \"Belev\"}", CodeJacksonTest3.class));
+    }
+
+    @Test
+    public void testSub() {
+        TestRequest.create()
+                .name("name1")
+                .numbers("123")
+                .value("value")
+                .sub()
+                    .value("value")
+                .done()
+            .done()
+            .validate();
     }
 
     @CodeRequest
