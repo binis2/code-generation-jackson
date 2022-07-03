@@ -23,16 +23,21 @@ package net.binis.codegen.jackson;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import lombok.SneakyThrows;
+import net.binis.codegen.annotation.builder.CodeBuilder;
 import net.binis.codegen.annotation.builder.CodeRequest;
-import net.binis.codegen.enrich.CreatorModifierEnricher;
-import net.binis.codegen.enrich.ModifierEnricher;
 import net.binis.codegen.exception.ValidationFormException;
 import net.binis.codegen.jackson.objects.TestRequest;
-import net.binis.codegen.validation.annotation.*;
+import net.binis.codegen.validation.annotation.SanitizeLowerCase;
+import net.binis.codegen.validation.annotation.SanitizeTrim;
+import net.binis.codegen.validation.annotation.ValidateLength;
+import net.binis.codegen.validation.annotation.ValidateNull;
 import org.junit.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class JacksonTest {
 
@@ -56,6 +61,33 @@ public class JacksonTest {
         assertEquals("Belev", obj2.getValue());
 
         assertThrows(ValidationFormException.class, () -> mapper.readValue("{\"name\": \"Binis\", \"value\": \"Belev\"}", CodeJacksonTest3.class));
+
+        var col = mapper.readValue("{\"name\": \"Binis\", \"list\": [{ \"value\": \"Belev\"}], \"set\": [{ \"value\": \"Smith\"}], \"map\": {\"key\" : {\"value\": \"Belev\"}}}", CodeJacksonTestCollection.class);
+
+        assertEquals("Binis", col.getName());
+        assertEquals("Belev", col.getList().get(0).getValue());
+
+        assertEquals("Smith", col.getSet().iterator().next().getValue());
+
+        assertEquals("Belev", col.getMap().get("key").getValue());
+
+        try {
+            mapper.readValue("{\"name\": \"Binis\", \"list\": [{ \"value\": null}], \"set\": [{ \"value\": null}], \"map\": {\"key\" : {\"value\": null}}}", CodeJacksonTestCollection.class);
+        } catch (ValidationFormException ex) {
+            assertNotNull(ex.getErrors().get("set[0].value"));
+            assertNotNull(ex.getErrors().get("list[0].value"));
+            assertNotNull(ex.getErrors().get("map[\"key\"].value"));
+        }
+
+        try {
+            mapper.readValue("{\"list\": [{ \"value\": null}, { \"value\": \"null\"}, { \"value\": null}]}", CodeJacksonTestCollection2.class);
+        } catch (ValidationFormException ex) {
+            assertNotNull(ex.getErrors().get("list[0].value"));
+            assertNotNull(ex.getErrors().get("list[2].value"));
+        }
+
+        var regObj = mapper.readValue("{\"list\": [{ \"value\": null}, { \"value\": \"null\"}, { \"value\": null}]}", CodeJacksonTestCollection3.class);
+        assertEquals(3, regObj.getList().size());
     }
 
     @Test
@@ -97,6 +129,49 @@ public class JacksonTest {
 
         @SanitizeTrim
         String value();
+    }
+
+    @CodeRequest
+    interface CodeJacksonTestCollectionPrototype {
+        @ValidateNull
+        String name();
+
+        @ValidateNull
+        List<Item> list();
+
+        @ValidateNull
+        Set<Item> set();
+
+        @ValidateNull
+        Map<String, Item> map();
+
+        @CodeRequest
+        interface Item {
+            @ValidateNull
+            String value();
+        }
+    }
+
+    @CodeRequest
+    interface CodeJacksonTestCollection2Prototype {
+
+        List<Item> list();
+        @CodeRequest
+        interface Item {
+            @ValidateNull
+            String value();
+        }
+    }
+
+    @CodeBuilder
+    interface CodeJacksonTestCollection3Prototype {
+
+        List<Item> list();
+        @CodeRequest
+        interface Item {
+            @ValidateNull
+            String value();
+        }
     }
 
 }
