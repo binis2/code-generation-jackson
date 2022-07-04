@@ -55,57 +55,61 @@ public class CodeProxyBeanDeserializer<T> extends JsonDeserializer<T> implements
     @Override
     public T deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
         var pair = stack.get();
-        var level = pair.getKey() + 1;
-        pair.key(level);
-        var result = parent.deserialize(p, ctxt);
-        if (result instanceof Validatable && pair.getValue().getKey() >= level) {
-            var list = pair.getValue().getValue();
-            if (isNull(list)) {
-                list = new LinkedList<>();
-                pair.getValue().value(list);
+        try {
+            var level = pair.getKey() + 1;
+            pair.key(level);
+            var result = parent.deserialize(p, ctxt);
+            if (result instanceof Validatable && pair.getValue().getKey() >= level) {
+                var list = pair.getValue().getValue();
+                if (isNull(list)) {
+                    list = new LinkedList<>();
+                    pair.getValue().value(list);
+                }
+                if (pair.getValue().getKey() > level) {
+                    list.clear();
+                    pair.getValue().key(level);
+                }
+                list.add((Validatable) result);
             }
-            if (pair.getValue().getKey() > level) {
-                list.clear();
-                pair.getValue().key(level);
-            }
-            list.add((Validatable) result);
-        }
-        pair.key(--level);
+            pair.key(--level);
 
-        if (level == 0) {
-            var list = pair.getValue().getValue();
-            try {
-                if (nonNull(list) && !list.isEmpty() && pair.getValue().getKey() == 1) {
-                    if (list.size() == 1) {
-                        list.get(0).validate();
-                    } else {
-                        Map<String, List<String>> errors = null;
-                        for (var i = 0; i < list.size(); i++) {
-                            try {
-                                list.get(i).validate();
-                            } catch (ValidationFormException ex) {
-                                if (isNull(errors)) {
-                                    errors = new LinkedHashMap<>();
-                                }
-                                var prefix = "[" + i + "].";
-                                for (var e : ex.getErrors().entrySet()) {
-                                    var eList = e.getValue();
-                                    errors.put(prefix + e.getKey(), eList);
-                                    eList.replaceAll(s -> prefix + s);
+            if (level == 0) {
+                var list = pair.getValue().getValue();
+                try {
+                    if (nonNull(list) && !list.isEmpty() && pair.getValue().getKey() == 1) {
+                        if (list.size() == 1) {
+                            list.get(0).validate();
+                        } else {
+                            Map<String, List<String>> errors = null;
+                            for (var i = 0; i < list.size(); i++) {
+                                try {
+                                    list.get(i).validate();
+                                } catch (ValidationFormException ex) {
+                                    if (isNull(errors)) {
+                                        errors = new LinkedHashMap<>();
+                                    }
+                                    var prefix = "[" + i + "].";
+                                    for (var e : ex.getErrors().entrySet()) {
+                                        var eList = e.getValue();
+                                        errors.put(prefix + e.getKey(), eList);
+                                        eList.replaceAll(s -> prefix + s);
+                                    }
                                 }
                             }
-                        }
-                        if (nonNull(errors)) {
-                            throw new ValidationFormException(null, errors);
+                            if (nonNull(errors)) {
+                                throw new ValidationFormException(null, errors);
+                            }
                         }
                     }
+                } finally {
+                    stack.remove();
                 }
-            } finally {
-                stack.remove();
             }
+            return result;
+        } catch (Exception ex) {
+            stack.remove();
+            throw ex;
         }
-
-        return result;
     }
 
     @Override
