@@ -28,6 +28,7 @@ import net.binis.codegen.validation.Validatable;
 
 public class CodeBeanDeserializerModifier extends BeanDeserializerModifier {
 
+    @SuppressWarnings("unchecked")
     @Override
     public JsonDeserializer<?> modifyDeserializer(DeserializationConfig config,
                                                   BeanDescription beanDesc, JsonDeserializer<?> deserializer) {
