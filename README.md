@@ -65,7 +65,7 @@ For full project examples please see [https://github.com/binis2/code-generation-
     <dependency>
         <groupId>dev.binis</groupId>
         <artifactId>code-generator-jackson</artifactId>
-        <version>0.3.10</version>
+        <version>0.4.0</version>
     </dependency>
 ```
 
@@ -79,3 +79,4 @@ Annotation processor - [https://github.com/binis2/code-generation-annotation]
 Validation and Sanitization extension - [https://github.com/binis2/code-generation-validation]   
 Spring Boot configuration - [https://github.com/binis2/code-generation-spring-configuration]   
 Projections support - [https://github.com/binis2/code-generation-projection]   
+Hibernate support - [https://github.com/binis2/code-generation-hibernate]   
