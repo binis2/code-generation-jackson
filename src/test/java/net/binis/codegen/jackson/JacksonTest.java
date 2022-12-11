@@ -31,7 +31,7 @@ import net.binis.codegen.validation.annotation.SanitizeLowerCase;
 import net.binis.codegen.validation.annotation.SanitizeTrim;
 import net.binis.codegen.validation.annotation.ValidateLength;
 import net.binis.codegen.validation.annotation.ValidateNull;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Map;
@@ -39,11 +39,11 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class JacksonTest {
+class JacksonTest {
 
     @SneakyThrows
     @Test
-    public void test() {
+    void test() {
         var mapper = new ObjectMapper();
         mapper.setTypeFactory(new CodeProxyTypeFactory(mapper.getTypeFactory()));
         SimpleModule module = new SimpleModule();
@@ -91,7 +91,7 @@ public class JacksonTest {
     }
 
     @Test
-    public void testSub() {
+    void testSub() {
         TestRequest.create()
                 .name("name1")
                 .numbers("123")
@@ -165,7 +165,6 @@ public class JacksonTest {
 
     @CodeBuilder
     interface CodeJacksonTestCollection3Prototype {
-
         List<Item> list();
         @CodeRequest
         interface Item {
