@@ -62,7 +62,7 @@ class JacksonTest {
 
         assertThrows(ValidationFormException.class, () -> mapper.readValue("{\"name\": \"Binis\", \"value\": \"Belev\"}", CodeJacksonTest3.class));
 
-        var col = mapper.readValue("{\"name\": \"Binis\", \"list\": [{ \"value\": \"Belev\"}], \"set\": [{ \"value\": \"Smith\"}], \"map\": {\"key\" : {\"value\": \"Belev\"}}}", CodeJacksonTestCollection.class);
+        var col = mapper.readValue("{\"name\": \"Binis\", \"item\": { \"value\": \"Belev\"}, \"list\": [{ \"value\": \"Belev\"}], \"set\": [{ \"value\": \"Smith\"}], \"map\": {\"key\" : {\"value\": \"Belev\"}}}", CodeJacksonTestCollection.class);
 
         assertEquals("Binis", col.getName());
         assertEquals("Belev", col.getList().get(0).getValue());
@@ -86,7 +86,7 @@ class JacksonTest {
             assertNotNull(ex.getErrors().get("list[2].value"));
         }
 
-        var regObj = mapper.readValue("{\"list\": [{ \"value\": null}, { \"value\": \"null\"}, { \"value\": null}]}", CodeJacksonTestCollection3.class);
+        var regObj = mapper.readValue("{\"list\": [{ \"value\": \"1\"}, { \"value\": \"null\"}, { \"value\": \"2\"}]}", CodeJacksonTestCollection3.class);
         assertEquals(3, regObj.getList().size());
     }
 
@@ -144,6 +144,9 @@ class JacksonTest {
 
         @ValidateNull
         Map<String, Item> map();
+
+        @ValidateNull
+        Item item();
 
         @CodeRequest
         interface Item {
