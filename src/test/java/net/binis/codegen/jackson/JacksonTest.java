@@ -44,11 +44,7 @@ class JacksonTest {
     @SneakyThrows
     @Test
     void test() {
-        var mapper = new ObjectMapper();
-        mapper.setTypeFactory(new CodeProxyTypeFactory(mapper.getTypeFactory()));
-        SimpleModule module = new SimpleModule();
-        module.setDeserializerModifier(new CodeBeanDeserializerModifier());
-        mapper.registerModule(module);
+        var mapper = CodeJackson.getMapper();
 
         var obj = mapper.readValue("{\"name\": \"Binis\", \"value\": \"Belev\"}", CodeJacksonTest.class);
 
