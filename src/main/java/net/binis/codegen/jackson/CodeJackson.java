@@ -22,8 +22,24 @@ package net.binis.codegen.jackson;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import net.binis.codegen.annotation.CodeConfiguration;
+import net.binis.codegen.exception.MapperException;
+import net.binis.codegen.factory.CodeFactory;
+import net.binis.codegen.map.Mapper;
 
+@CodeConfiguration
 public class CodeJackson {
+
+    public static void initialize() {
+        CodeFactory.registerType(ObjectMapper.class, CodeFactory.lazy(CodeJackson::getMapper));
+        Mapper.registerMapperClass(String.class, Object.class, (source, destination) -> {
+            try {
+                return CodeFactory.create(ObjectMapper.class).readValue(source, destination);
+            } catch (Exception e) {
+                throw new MapperException(e);
+            }
+        });
+    }
 
     public static ObjectMapper getMapper() {
         var mapper = new ObjectMapper();
@@ -32,6 +48,10 @@ public class CodeJackson {
         module.setDeserializerModifier(new CodeBeanDeserializerModifier());
         mapper.registerModule(module);
         return mapper;
+    }
+
+    private CodeJackson() {
+        //Do nothing
     }
 
 }

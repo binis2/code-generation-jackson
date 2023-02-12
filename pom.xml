@@ -82,7 +82,6 @@
             <groupId>dev.binis</groupId>
             <artifactId>code-generator-annotation</artifactId>
             <version>1.0.1</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
