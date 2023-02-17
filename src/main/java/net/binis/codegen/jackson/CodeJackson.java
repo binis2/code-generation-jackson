@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import net.binis.codegen.annotation.CodeConfiguration;
 import net.binis.codegen.exception.MapperException;
+import net.binis.codegen.exception.ValidationFormException;
 import net.binis.codegen.factory.CodeFactory;
 import net.binis.codegen.map.Mapper;
 
@@ -35,6 +36,8 @@ public class CodeJackson {
         Mapper.registerMapperClass(String.class, Object.class, (source, destination) -> {
             try {
                 return CodeFactory.create(ObjectMapper.class).readValue(source, destination);
+            } catch (ValidationFormException v) {
+                throw v;
             } catch (Exception e) {
                 throw new MapperException(e);
             }
