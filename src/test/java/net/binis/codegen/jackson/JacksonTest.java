@@ -4,7 +4,7 @@ package net.binis.codegen.jackson;
  * #%L
  * code-generator-jackson
  * %%
- * Copyright (C) 2021 - 2022 Binis Belev
+ * Copyright (C) 2021 - 2023 Binis Belev
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,6 @@ package net.binis.codegen.jackson;
  * #L%
  */
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import lombok.SneakyThrows;
 import net.binis.codegen.annotation.builder.CodeBuilder;
 import net.binis.codegen.annotation.builder.CodeRequest;
