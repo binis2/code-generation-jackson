@@ -99,6 +99,7 @@ class JacksonTest {
 
     @CodeRequest
     interface CodeJacksonTestPrototype {
+        @ValidateNull
         String name();
         String value();
     }
