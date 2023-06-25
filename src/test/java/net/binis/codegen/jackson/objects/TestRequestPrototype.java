@@ -26,7 +26,6 @@ import net.binis.codegen.enrich.ModifierEnricher;
 import net.binis.codegen.enrich.ValidationEnricher;
 import net.binis.codegen.options.ExposeValidateMethodOption;
 import net.binis.codegen.options.HiddenCreateMethodOption;
-import net.binis.codegen.options.Options;
 import net.binis.codegen.options.ValidationFormOption;
 import net.binis.codegen.validation.annotation.SanitizeTrim;
 import net.binis.codegen.validation.annotation.ValidateLength;
