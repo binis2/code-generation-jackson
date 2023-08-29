@@ -33,9 +33,9 @@ public class CodeJackson {
 
     public static void initialize() {
         CodeFactory.registerType(ObjectMapper.class, CodeFactory.lazy(CodeJackson::getMapper));
-        Mapper.registerMapperClass(String.class, Object.class, (source, destination) -> {
+        Mapper.registerMapper(String.class, Object.class, (source, destination) -> {
             try {
-                return CodeFactory.create(ObjectMapper.class).readValue(source, destination);
+                return CodeFactory.create(ObjectMapper.class).readerForUpdating(destination).readValue(source);
             } catch (ValidationFormException v) {
                 throw v;
             } catch (Exception e) {
