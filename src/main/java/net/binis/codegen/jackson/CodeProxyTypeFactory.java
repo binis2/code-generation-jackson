@@ -28,6 +28,10 @@ import com.fasterxml.jackson.databind.util.LookupCache;
 import net.binis.codegen.factory.CodeFactory;
 import net.binis.codegen.tools.Reflection;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import static java.util.Objects.nonNull;
 
 public class CodeProxyTypeFactory extends TypeFactory {
@@ -39,7 +43,7 @@ public class CodeProxyTypeFactory extends TypeFactory {
 
     @Override
     protected JavaType _fromClass(ClassStack context, Class<?> rawType, TypeBindings bindings) {
-        var type = CodeFactory.lookup(rawType);
+        var type = rawType.equals(Map.class) || rawType.equals(Set.class) || rawType.equals(List.class) ? null : CodeFactory.lookup(rawType);
         if (nonNull(type)) {
             return super._fromClass(context, type, bindings);
         }
