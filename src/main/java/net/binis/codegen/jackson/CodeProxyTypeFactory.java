@@ -24,7 +24,6 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.ClassStack;
 import com.fasterxml.jackson.databind.type.TypeBindings;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import lombok.extern.slf4j.Slf4j;
 import net.binis.codegen.factory.CodeFactory;
 import net.binis.codegen.tools.Reflection;
 
@@ -34,7 +33,6 @@ import static java.util.Objects.nonNull;
 import static net.binis.codegen.tools.Reflection.loadClass;
 import static net.binis.codegen.tools.Tools.with;
 
-@Slf4j
 public class CodeProxyTypeFactory extends TypeFactory {
 
     protected static Set<Class<?>> collections = initCollections();
@@ -57,10 +55,8 @@ public class CodeProxyTypeFactory extends TypeFactory {
     protected JavaType _fromClass(ClassStack context, Class<?> rawType, TypeBindings bindings) {
         var type = collections.contains(rawType) ? null : CodeFactory.lookup(rawType);
         if (nonNull(type)) {
-            log.info("{}", type.getCanonicalName());
             return super._fromClass(context, type, bindings);
         }
-        log.info("{}", rawType.getCanonicalName());
         return super._fromClass(context, rawType, bindings);
     }
 
