@@ -26,6 +26,7 @@ import net.binis.codegen.annotation.CodeConfiguration;
 import net.binis.codegen.exception.MapperException;
 import net.binis.codegen.exception.ValidationFormException;
 import net.binis.codegen.factory.CodeFactory;
+import net.binis.codegen.jackson.serialize.CodeEnumStringSerializer;
 import net.binis.codegen.map.Mapper;
 
 @CodeConfiguration
@@ -49,6 +50,7 @@ public class CodeJackson {
         mapper.setTypeFactory(new CodeProxyTypeFactory(mapper.getTypeFactory()));
         SimpleModule module = new SimpleModule();
         module.setDeserializerModifier(new CodeBeanDeserializerModifier());
+        module.addSerializer(new CodeEnumStringSerializer());
         mapper.registerModule(module);
         return mapper;
     }
