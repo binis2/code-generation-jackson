@@ -20,6 +20,7 @@ package net.binis.codegen.jackson;
  * #L%
  */
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import net.binis.codegen.annotation.CodeConfiguration;
@@ -28,6 +29,11 @@ import net.binis.codegen.exception.ValidationFormException;
 import net.binis.codegen.factory.CodeFactory;
 import net.binis.codegen.jackson.serialize.CodeEnumStringSerializer;
 import net.binis.codegen.map.Mapper;
+import net.binis.codegen.tools.Reflection;
+
+import java.util.Map;
+
+import static java.util.Objects.nonNull;
 
 @CodeConfiguration
 public class CodeJackson {
@@ -43,6 +49,17 @@ public class CodeJackson {
                 throw new MapperException(e);
             }
         });
+
+        Mapper.registerMapper(Map.class, Object.class, (source, destination) -> {
+            try {
+                return CodeFactory.create(ObjectMapper.class).convertValue(source, destination.getClass());
+            } catch (ValidationFormException v) {
+                throw v;
+            } catch (Exception e) {
+                throw new MapperException(e);
+            }
+        });
+
     }
 
     public static ObjectMapper getMapper() {

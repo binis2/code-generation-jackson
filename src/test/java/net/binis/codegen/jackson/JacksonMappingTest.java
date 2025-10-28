@@ -25,6 +25,8 @@ import net.binis.codegen.map.Mapper;
 import net.binis.codegen.test.BaseCodeGenTest;
 import org.junit.jupiter.api.Test;
 
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class JacksonMappingTest extends BaseCodeGenTest {
@@ -44,6 +46,13 @@ class JacksonMappingTest extends BaseCodeGenTest {
         var obj = new TestMapper();
         Mapper.map(json, obj);
         assertEquals("binis", obj.getName());
+    }
+
+    @Test
+    void testMap() {
+        var map = Map.of("name", "test");
+        var result = Mapper.map(map, TestMapper.class);
+        assertEquals("test", result.getName());
     }
 
     @Data

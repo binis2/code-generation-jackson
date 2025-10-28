@@ -20,15 +20,20 @@ package net.binis.codegen.jackson;
  * #L%
  */
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import net.binis.codegen.annotation.builder.CodeBuilder;
 import net.binis.codegen.annotation.builder.CodeRequest;
+import net.binis.codegen.exception.MapperException;
 import net.binis.codegen.exception.ValidationFormException;
+import net.binis.codegen.factory.CodeFactory;
 import net.binis.codegen.jackson.objects.TestRequest;
+import net.binis.codegen.map.Mapper;
 import net.binis.codegen.validation.annotation.SanitizeLowerCase;
 import net.binis.codegen.validation.annotation.SanitizeTrim;
 import net.binis.codegen.validation.annotation.ValidateLength;
 import net.binis.codegen.validation.annotation.ValidateNull;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -38,6 +43,19 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 class JacksonTest {
+
+    @BeforeAll
+    static void beforeAll() {
+        Mapper.registerMapper(Map.class, Object.class, (source, destination) -> {
+            try {
+                return CodeFactory.create(ObjectMapper.class).convertValue(source, destination.getClass());
+            } catch (ValidationFormException v) {
+                throw v;
+            } catch (Exception e) {
+                throw new MapperException(e);
+            }
+        });
+    }
 
     @SneakyThrows
     @Test
@@ -95,6 +113,13 @@ class JacksonTest {
                 .done()
             .done()
             .validate();
+    }
+
+    @Test
+    void testMapToObject() {
+        var map = Map.of("name", "value");
+        var obj = Mapper.convert(map, CodeJacksonTest.class);
+        assertEquals("value", obj.getName());
     }
 
     @CodeRequest
