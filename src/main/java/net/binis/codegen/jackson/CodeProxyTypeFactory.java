@@ -44,6 +44,14 @@ public class CodeProxyTypeFactory extends TypeFactory {
         result.add(Set.class);
         result.add(Collection.class);
         with(loadClass("java.util.SequencedCollection"), result::add);
+        with(loadClass("java.util.ImmutableCollections$SubList"), result::add);
+        with(loadClass("java.util.ImmutableCollections$List12"), result::add);
+        with(loadClass("java.util.ImmutableCollections$ListN"), result::add);
+        with(loadClass("java.util.ImmutableCollections$Set12"), result::add);
+        with(loadClass("java.util.ImmutableCollections$SetN"), result::add);
+        with(loadClass("java.util.ImmutableCollections$Map1"), result::add);
+        with(loadClass("java.util.ImmutableCollections$MapN"), result::add);
+
         return result;
     }
 
@@ -56,6 +64,13 @@ public class CodeProxyTypeFactory extends TypeFactory {
         var type = collections.contains(rawType) ? null : CodeFactory.lookup(rawType);
         if (nonNull(type)) {
             return super._fromClass(context, type, bindings);
+        }
+        if (List.class.isAssignableFrom(rawType)) {
+            rawType = List.class;
+        } else if (Set.class.isAssignableFrom(rawType)) {
+            rawType = Set.class;
+        } else if (Map.class.isAssignableFrom(rawType)) {
+            rawType = Map.class;
         }
         return super._fromClass(context, rawType, bindings);
     }
