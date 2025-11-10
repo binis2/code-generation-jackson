@@ -30,7 +30,7 @@ import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
 import com.fasterxml.jackson.databind.type.LogicalType;
 import com.fasterxml.jackson.databind.util.AccessPattern;
 import com.fasterxml.jackson.databind.util.NameTransformer;
-import lombok.val;
+import net.binis.codegen.annotation.Ignore;
 import net.binis.codegen.exception.ValidationFormException;
 import net.binis.codegen.objects.Pair;
 import net.binis.codegen.validation.Validatable;
@@ -59,7 +59,8 @@ public class CodeProxyBeanDeserializer<T> extends JsonDeserializer<T> implements
             var level = pair.getKey() + 1;
             pair.key(level);
             var result = parent.deserialize(p, ctxt);
-            if (result instanceof Validatable && pair.getValue().getKey() >= level) {
+            var ignore = result.getClass().getAnnotation(Ignore.class);
+            if (result instanceof Validatable validatable && pair.getValue().getKey() >= level && (isNull(ignore) || !ignore.forValidation())) {
                 var list = pair.getValue().getValue();
                 if (isNull(list)) {
                     list = new LinkedList<>();
@@ -69,7 +70,7 @@ public class CodeProxyBeanDeserializer<T> extends JsonDeserializer<T> implements
                     list.clear();
                     pair.getValue().key(level);
                 }
-                list.add((Validatable) result);
+                list.add(validatable);
             }
             pair.key(--level);
 
