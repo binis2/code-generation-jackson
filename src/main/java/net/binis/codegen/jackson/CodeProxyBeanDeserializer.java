@@ -20,40 +20,40 @@ package net.binis.codegen.jackson;
  * #L%
  */
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.*;
-import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
-import com.fasterxml.jackson.databind.deser.ResolvableDeserializer;
-import com.fasterxml.jackson.databind.deser.SettableBeanProperty;
-import com.fasterxml.jackson.databind.deser.impl.ObjectIdReader;
-import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
-import com.fasterxml.jackson.databind.type.LogicalType;
-import com.fasterxml.jackson.databind.util.AccessPattern;
-import com.fasterxml.jackson.databind.util.NameTransformer;
 import net.binis.codegen.annotation.Ignore;
 import net.binis.codegen.exception.ValidationFormException;
 import net.binis.codegen.objects.Pair;
 import net.binis.codegen.validation.Validatable;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.BeanProperty;
+import tools.jackson.databind.DeserializationConfig;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.ValueDeserializer;
+import tools.jackson.databind.deser.SettableBeanProperty;
+import tools.jackson.databind.deser.impl.ObjectIdReader;
+import tools.jackson.databind.jsontype.TypeDeserializer;
+import tools.jackson.databind.type.LogicalType;
+import tools.jackson.databind.util.AccessPattern;
+import tools.jackson.databind.util.NameTransformer;
 
-import java.io.IOException;
 import java.util.*;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
-public class CodeProxyBeanDeserializer<T> extends JsonDeserializer<T> implements ResolvableDeserializer, ContextualDeserializer {
+public class CodeProxyBeanDeserializer<T> extends ValueDeserializer<T> {
 
-    private final JsonDeserializer<T> parent;
+    private final ValueDeserializer<T> parent;
 
     private static final ThreadLocal<Pair<Integer, Pair<Integer, List<Validatable>>>> stack = ThreadLocal.withInitial(() -> Pair.of(0, Pair.of(Integer.MAX_VALUE, null)));
 
-    public CodeProxyBeanDeserializer(JsonDeserializer<T> parent) {
+    public CodeProxyBeanDeserializer(ValueDeserializer<T> parent) {
         super();
         this.parent = parent;
     }
 
     @Override
-    public T deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+    public T deserialize(JsonParser p, DeserializationContext ctxt) {
         var pair = stack.get();
         try {
             var level = pair.getKey() + 1;
@@ -114,29 +114,28 @@ public class CodeProxyBeanDeserializer<T> extends JsonDeserializer<T> implements
     }
 
     @Override
-    public T deserialize(JsonParser p, DeserializationContext ctxt, T intoValue) throws IOException {
+    public T deserialize(JsonParser p, DeserializationContext ctxt, T intoValue) {
         return parent.deserialize(p, ctxt, intoValue);
     }
 
     @Override
-    public Object deserializeWithType(JsonParser p, DeserializationContext ctxt, TypeDeserializer typeDeserializer) throws
-            IOException {
+    public Object deserializeWithType(JsonParser p, DeserializationContext ctxt, TypeDeserializer typeDeserializer) {
         return parent.deserializeWithType(p, ctxt, typeDeserializer);
     }
 
     @Override
     public Object deserializeWithType(JsonParser p, DeserializationContext ctxt, TypeDeserializer
-            typeDeserializer, T intoValue) throws IOException {
+            typeDeserializer, T intoValue) {
         return parent.deserializeWithType(p, ctxt, typeDeserializer, intoValue);
     }
 
     @Override
-    public JsonDeserializer<T> unwrappingDeserializer(NameTransformer unwrapper) {
-        return parent.unwrappingDeserializer(unwrapper);
+    public ValueDeserializer<T> unwrappingDeserializer(DeserializationContext ctxt, NameTransformer unwrapper) {
+        return parent.unwrappingDeserializer(ctxt, unwrapper);
     }
 
     @Override
-    public JsonDeserializer<?> replaceDelegatee(JsonDeserializer<?> delegatee) {
+    public ValueDeserializer<?> replaceDelegatee(ValueDeserializer<?> delegatee) {
         return parent.replaceDelegatee(delegatee);
     }
 
@@ -156,7 +155,7 @@ public class CodeProxyBeanDeserializer<T> extends JsonDeserializer<T> implements
     }
 
     @Override
-    public JsonDeserializer<?> getDelegatee() {
+    public ValueDeserializer<?> getDelegatee() {
         return parent.getDelegatee();
     }
 
@@ -166,7 +165,7 @@ public class CodeProxyBeanDeserializer<T> extends JsonDeserializer<T> implements
     }
 
     @Override
-    public T getNullValue(DeserializationContext ctxt) throws JsonMappingException {
+    public Object getNullValue(DeserializationContext ctxt) {
         return parent.getNullValue(ctxt);
     }
 
@@ -176,12 +175,12 @@ public class CodeProxyBeanDeserializer<T> extends JsonDeserializer<T> implements
     }
 
     @Override
-    public Object getAbsentValue(DeserializationContext ctxt) throws JsonMappingException {
+    public Object getAbsentValue(DeserializationContext ctxt) {
         return parent.getAbsentValue(ctxt);
     }
 
     @Override
-    public Object getEmptyValue(DeserializationContext ctxt) throws JsonMappingException {
+    public Object getEmptyValue(DeserializationContext ctxt) {
         return parent.getEmptyValue(ctxt);
     }
 
@@ -191,8 +190,8 @@ public class CodeProxyBeanDeserializer<T> extends JsonDeserializer<T> implements
     }
 
     @Override
-    public ObjectIdReader getObjectIdReader() {
-        return parent.getObjectIdReader();
+    public ObjectIdReader getObjectIdReader(DeserializationContext ctxt) {
+        return parent.getObjectIdReader(ctxt);
     }
 
     @Override
@@ -206,14 +205,13 @@ public class CodeProxyBeanDeserializer<T> extends JsonDeserializer<T> implements
     }
 
     @Override
-    public void resolve(DeserializationContext ctxt) throws JsonMappingException {
-        ((ResolvableDeserializer) parent).resolve(ctxt);
+    public void resolve(DeserializationContext ctxt) {
+        parent.resolve(ctxt);
     }
 
     @Override
-    public JsonDeserializer<?> createContextual(DeserializationContext ctxt, BeanProperty property) throws
-            JsonMappingException {
-        ((ContextualDeserializer) parent).createContextual(ctxt, property);
+    public ValueDeserializer<?> createContextual(DeserializationContext ctxt, BeanProperty property) {
+        parent.createContextual(ctxt, property);
         return this;
     }
 }

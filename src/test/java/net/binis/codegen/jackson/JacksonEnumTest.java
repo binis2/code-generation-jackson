@@ -20,21 +20,19 @@ package net.binis.codegen.jackson;
  * #L%
  */
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import net.binis.codegen.annotation.EnumPrototype;
 import net.binis.codegen.annotation.builder.CodeBuilder;
 import net.binis.codegen.factory.CodeFactory;
-import net.binis.codegen.map.Mapper;
 import net.binis.codegen.test.BaseCodeGenTest;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class JacksonEnumTest extends BaseCodeGenTest {
 
     @Test
-    void testEnum() throws JsonProcessingException {
+    void testEnum() {
         var obj = TestObject.create().type(TestEnum.TEST).done();
         var s = CodeFactory.create(ObjectMapper.class).writeValueAsString(obj);
         assertEquals("{\"type\":\"TEST\"}", s);

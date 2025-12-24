@@ -20,7 +20,6 @@ package net.binis.codegen.jackson;
  * #L%
  */
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import net.binis.codegen.annotation.builder.CodeBuilder;
 import net.binis.codegen.annotation.builder.CodeRequest;
@@ -35,6 +34,7 @@ import net.binis.codegen.validation.annotation.ValidateLength;
 import net.binis.codegen.validation.annotation.ValidateNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
 import java.util.Map;

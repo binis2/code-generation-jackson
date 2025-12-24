@@ -20,12 +20,12 @@ package net.binis.codegen.jackson;
  * #L%
  */
 
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.type.ClassStack;
-import com.fasterxml.jackson.databind.type.TypeBindings;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 import net.binis.codegen.factory.CodeFactory;
 import net.binis.codegen.tools.Reflection;
+import tools.jackson.databind.JavaType;
+import tools.jackson.databind.type.ClassStack;
+import tools.jackson.databind.type.TypeBindings;
+import tools.jackson.databind.type.TypeFactory;
 
 import java.util.*;
 
@@ -36,6 +36,8 @@ import static net.binis.codegen.tools.Tools.with;
 public class CodeProxyTypeFactory extends TypeFactory {
 
     protected static Set<Class<?>> collections = initCollections();
+
+    private TypeFactory parent;
 
     protected static Set<Class<?>> initCollections() {
         var result = new HashSet<Class<?>>();
@@ -57,6 +59,7 @@ public class CodeProxyTypeFactory extends TypeFactory {
 
     public CodeProxyTypeFactory(TypeFactory parent) {
         super(Reflection.getFieldValue(parent, "_typeCache"));
+        this.parent = parent;
     }
 
     @Override
@@ -74,6 +77,12 @@ public class CodeProxyTypeFactory extends TypeFactory {
         }
         return super._fromClass(context, rawType, bindings);
     }
+
+    @Override
+    public TypeFactory snapshot() {
+        return new CodeProxyTypeFactory(parent.snapshot());
+    }
+
 
 
 }

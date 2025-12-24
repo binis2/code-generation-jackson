@@ -20,12 +20,10 @@ package net.binis.codegen.jackson.serialize;
  * #L%
  */
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import net.binis.codegen.objects.base.enumeration.CodeEnum;
-
-import java.io.IOException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ser.std.StdSerializer;
 
 public class CodeEnumStringSerializer extends StdSerializer<CodeEnum> {
 
@@ -34,7 +32,7 @@ public class CodeEnumStringSerializer extends StdSerializer<CodeEnum> {
     }
 
     @Override
-    public void serialize(CodeEnum codeEnum, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
+    public void serialize(CodeEnum codeEnum, JsonGenerator jsonGenerator, SerializationContext provider) {
         jsonGenerator.writeString(codeEnum.name());
     }
 }

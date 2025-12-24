@@ -20,18 +20,18 @@ package net.binis.codegen.jackson;
  * #L%
  */
 
-import com.fasterxml.jackson.databind.BeanDescription;
-import com.fasterxml.jackson.databind.DeserializationConfig;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.deser.BeanDeserializerModifier;
 import net.binis.codegen.validation.Validatable;
+import tools.jackson.databind.BeanDescription;
+import tools.jackson.databind.DeserializationConfig;
+import tools.jackson.databind.ValueDeserializer;
+import tools.jackson.databind.deser.ValueDeserializerModifier;
 
-public class CodeBeanDeserializerModifier extends BeanDeserializerModifier {
+public class CodeBeanDeserializerModifier extends ValueDeserializerModifier {
 
     @SuppressWarnings("unchecked")
     @Override
-    public JsonDeserializer<?> modifyDeserializer(DeserializationConfig config,
-                                                  BeanDescription beanDesc, JsonDeserializer<?> deserializer) {
+    public ValueDeserializer<?> modifyDeserializer(DeserializationConfig config,
+                                                   BeanDescription.Supplier beanDesc, ValueDeserializer<?> deserializer) {
         var result = super.modifyDeserializer(config, beanDesc, deserializer);
         if (Validatable.class.isAssignableFrom(beanDesc.getType().getRawClass())) {
             return new CodeProxyBeanDeserializer(result);
