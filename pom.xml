@@ -85,6 +85,7 @@
             <groupId>dev.binis</groupId>
             <artifactId>code-generator-annotation</artifactId>
             <version>${dev.binis}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
